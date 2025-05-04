@@ -1,1 +1,1 @@
-export { default as GameOfLife } from './GameOfLife'
+export { default as GameOfLife } from './GameOfLife';
