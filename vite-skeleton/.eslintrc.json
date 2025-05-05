@@ -1,36 +1,45 @@
 {
-  "root": true,
-  "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "react",
-    "react-hooks",
-    "@typescript-eslint",
-    "jsx-a11y"
-  ],
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:jsx-a11y/recommended",
-    "plugin:react-hooks/recommended",
-    "plugin:prettier/recommended"
+    "plugin:@typescript-eslint/recommended"
   ],
-  "settings": {
-    "react": {
-      "version": "detect"
-    }
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": "latest",
+    "sourceType": "module"
   },
+  "plugins": [
+    "react",
+    "@typescript-eslint"
+  ],
   "rules": {
-    "react/react-in-jsx-scope": "off",
+    // Enforce function declarations for named functions, allowing arrow functions
+    "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
+
+    // Enforce arrow functions for React components
     "react/function-component-definition": [
-      "warn",
+      "error",
       {
         "namedComponents": "arrow-function",
         "unnamedComponents": "arrow-function"
       }
     ],
-    "@typescript-eslint/no-unused-vars": "warn",
-    "prettier/prettier": ["warn"],
-        // Prefer function declarations (like `export function foo()`) for named functions
-        "func-style": ["warn", "declaration", { "allowArrowFunctions": true }]  }
+
+    // Additional recommended rules
+    "react/prop-types": "off",
+    "@typescript-eslint/explicit-function-return-type": "off"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
 }

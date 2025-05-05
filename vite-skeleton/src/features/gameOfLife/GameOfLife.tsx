@@ -1,5 +1,5 @@
 import { useRef, useEffect, useReducer } from 'react';
-import { generateEmptyGrid, computeNextGrid, gridsAreEqual } from './utils';
+import { generateEmptyGrid, computeNextGrid, gridsAreEqual, generateRandomGrid } from './utils';
 import './GameOfLife.css';
 
 function GameOfLife() {
@@ -10,13 +10,15 @@ function GameOfLife() {
   type State = {
     isRunning: boolean;
     grid: number[][];
+    generation: number;
   };
 
   type Action =
     | { type: 'TOGGLE_RUNNING' }
     | { type: 'STEP'; numRows: number; numCols: number }
     | { type: 'CLEAR'; numRows: number; numCols: number }
-    | { type: 'TOGGLE_CELL'; row: number; col: number };
+    | { type: 'TOGGLE_CELL'; row: number; col: number }
+    | { type: 'RANDOMIZE'; numRows: number; numCols: number };
 
   const reducer = (state: State, action: Action): State => {
     switch (action.type) {
@@ -24,32 +26,35 @@ function GameOfLife() {
         return { ...state, isRunning: !state.isRunning };
       case 'STEP': {
         const nextGrid = computeNextGrid(state.grid, action.numRows, action.numCols);
-
-        // Auto-pause if no change
         if (gridsAreEqual(state.grid, nextGrid)) {
-          return {
-            ...state,
-            isRunning: false,
-          };
+          return { ...state, isRunning: false };
         }
-
         return {
           ...state,
           grid: nextGrid,
+          generation: state.generation + 1,
         };
       }
-
       case 'CLEAR':
         return {
           ...state,
           isRunning: false,
           grid: generateEmptyGrid(action.numRows, action.numCols),
+          generation: 0,
         };
       case 'TOGGLE_CELL': {
         const newGrid = state.grid.map((arr) => [...arr]);
         newGrid[action.row][action.col] = state.grid[action.row][action.col] ? 0 : 1;
         return { ...state, grid: newGrid };
       }
+      case 'RANDOMIZE':
+        return {
+          ...state,
+          isRunning: false,
+          generation: 0,
+          grid: generateRandomGrid(action.numRows, action.numCols),
+        };
+
       default:
         return state;
     }
@@ -58,6 +63,7 @@ function GameOfLife() {
   const [state, dispatch] = useReducer(reducer, {
     isRunning: false,
     grid: generateEmptyGrid(numRows, numCols),
+    generation: 0,
   });
 
   useEffect(() => {
@@ -98,11 +104,25 @@ function GameOfLife() {
           ))
         )}
       </div>
-      <button onClick={() => dispatch({ type: 'TOGGLE_RUNNING' })}>
-        {state.isRunning ? 'Pause' : 'Start'}
-      </button>
-      <button onClick={() => dispatch({ type: 'STEP', numRows, numCols })}>Step</button>
-      <button onClick={() => dispatch({ type: 'CLEAR', numRows, numCols })}>Clear</button>
+      <div>
+        <p>Generation: {state.generation}</p>
+        <button onClick={() => dispatch({ type: 'RANDOMIZE', numRows, numCols })}>Randomize</button>
+
+        <button onClick={() => dispatch({ type: 'TOGGLE_RUNNING' })}>
+          {state.isRunning ? 'Pause' : 'Start'}
+        </button>
+        <button
+          onClick={() => {
+            if (state.isRunning) {
+              dispatch({ type: 'TOGGLE_RUNNING' }); // Pause the simulation
+            }
+            dispatch({ type: 'STEP', numRows, numCols }); // Advance one generation
+          }}
+        >
+          Step
+        </button>
+        <button onClick={() => dispatch({ type: 'CLEAR', numRows, numCols })}>Clear</button>
+      </div>
     </>
   );
 }

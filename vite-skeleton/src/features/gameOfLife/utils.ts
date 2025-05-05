@@ -59,3 +59,15 @@ export function computeNextGrid(
 export function gridsAreEqual(a: number[][], b: number[][]): boolean {
   return a.every((row, i) => row.every((cell, j) => cell === b[i][j]));
 }
+
+/**
+ * Generate a random grid of 0s and 1s
+ * @param rows - number of rows
+ * @param cols - number of columns
+ * @returns a 2D array representing the random grid
+ */
+export function generateRandomGrid(rows: number, cols: number): number[][] {
+  return Array.from({ length: rows }, () =>
+    Array.from({ length: cols }, () => (Math.random() > 0.5 ? 1 : 0))
+  );
+}
