@@ -1,12 +1,26 @@
-export const generateEmptyGrid = (rows: number, cols: number): number[][] =>
-  Array.from({ length: rows }, () => Array(cols).fill(0));
+/**
+ * Generate a 2D grid of zeros
+ * @param rows - number of rows
+ * @param cols - number of columns
+ * @returns a 2D array representing the initial empty grid
+ */
+export function generateEmptyGrid(rows: number, cols: number): number[][] {
+  return Array.from({ length: rows }, () => Array(cols).fill(0));
+}
 
-export const computeNextGrid = (
+/**
+ * Compute the next grid state according to Conway's Game of Life rules
+ * @param currentGrid - the current 2D grid
+ * @param numRows - total number of rows
+ * @param numCols - total number of columns
+ * @returns a new grid representing the next generation
+ */
+export function computeNextGrid(
   currentGrid: number[][],
   numRows: number,
   numCols: number
-): number[][] => {
-  const newGrid = currentGrid.map((arr) => [...arr]);
+): number[][] {
+  const newGrid = currentGrid.map((row) => [...row]);
 
   for (let row = 0; row < numRows; row++) {
     for (let col = 0; col < numCols; col++) {
@@ -34,4 +48,14 @@ export const computeNextGrid = (
   }
 
   return newGrid;
-};
+}
+
+/**
+ * Compare two 2D grids for equality
+ * @param a - first grid
+ * @param b - second grid
+ * @returns true if all cells are equal, false otherwise
+ */
+export function gridsAreEqual(a: number[][], b: number[][]): boolean {
+  return a.every((row, i) => row.every((cell, j) => cell === b[i][j]));
+}

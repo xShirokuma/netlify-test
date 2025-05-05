@@ -1,11 +1,10 @@
-import { useState, useRef, useCallback, useReducer } from 'react';
-import { generateEmptyGrid, computeNextGrid } from './utils';
+import { useRef, useEffect, useReducer } from 'react';
+import { generateEmptyGrid, computeNextGrid, gridsAreEqual } from './utils';
 import './GameOfLife.css';
 
 function GameOfLife() {
   const numRows = 64;
   const numCols = 64;
-  const [grid, setGrid] = useState(generateEmptyGrid(numRows, numCols));
   const isRunningRef = useRef(false);
 
   type State = {
@@ -23,11 +22,23 @@ function GameOfLife() {
     switch (action.type) {
       case 'TOGGLE_RUNNING':
         return { ...state, isRunning: !state.isRunning };
-      case 'STEP':
+      case 'STEP': {
+        const nextGrid = computeNextGrid(state.grid, action.numRows, action.numCols);
+
+        // Auto-pause if no change
+        if (gridsAreEqual(state.grid, nextGrid)) {
+          return {
+            ...state,
+            isRunning: false,
+          };
+        }
+
         return {
           ...state,
-          grid: computeNextGrid(state.grid, action.numRows, action.numCols),
+          grid: nextGrid,
         };
+      }
+
       case 'CLEAR':
         return {
           ...state,
@@ -49,22 +60,34 @@ function GameOfLife() {
     grid: generateEmptyGrid(numRows, numCols),
   });
 
-  const runSimulation = useCallback(() => {
-    if (!isRunningRef.current) return;
+  useEffect(() => {
+    isRunningRef.current = state.isRunning;
+  }, [state.isRunning]);
 
-    setGrid((prev) => computeNextGrid(prev, numRows, numCols));
-
-    setTimeout(runSimulation, 100); // adjust speed here (ms)
-  }, []);
+  useEffect(() => {
+    if (state.isRunning) {
+      const loop = () => {
+        if (!isRunningRef.current) return;
+        dispatch({ type: 'STEP', numRows, numCols });
+        setTimeout(loop, 100);
+      };
+      loop();
+    }
+  }, [state.isRunning, dispatch]);
 
   return (
     <>
       <div style={{ display: 'grid', gridTemplateColumns: `repeat(${numCols}, 20px)` }}>
-        {grid.map((row, rowIndex) =>
+        {state.grid.map((row, rowIndex) =>
           row.map((cell, colIndex) => (
             <div
               key={`${rowIndex}-${colIndex}`}
-              onClick={() => dispatch({ type: 'TOGGLE_CELL', row: rowIndex, col: colIndex })}
+              onClick={() => {
+                if (isRunningRef.current) {
+                  dispatch({ type: 'TOGGLE_RUNNING' }); // Pause
+                }
+                dispatch({ type: 'TOGGLE_CELL', row: rowIndex, col: colIndex });
+              }}
               style={{
                 width: 20,
                 height: 20,
