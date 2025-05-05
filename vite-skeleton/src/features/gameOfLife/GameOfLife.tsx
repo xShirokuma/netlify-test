@@ -6,9 +6,7 @@ function GameOfLife() {
   const numRows = 64;
   const numCols = 64;
   const [grid, setGrid] = useState(generateEmptyGrid(numRows, numCols));
-  const [isRunning, setIsRunning] = useState(false);
-  const isRunningRef = useRef(isRunning);
-  isRunningRef.current = isRunning;
+  const isRunningRef = useRef(false);
 
   type State = {
     isRunning: boolean;
