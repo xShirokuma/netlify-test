@@ -1,10 +1,11 @@
 import { useRef, useEffect, useReducer } from 'react';
 import { generateEmptyGrid, computeNextGrid, gridsAreEqual, generateRandomGrid } from './utils';
+import { GRID_ROWS, GRID_COLS } from './config';
 import './GameOfLife.css';
 
 function GameOfLife() {
-  const numRows = 64;
-  const numCols = 64;
+  const numRows = GRID_ROWS;
+  const numCols = GRID_COLS;
   const isRunningRef = useRef(false);
 
   type State = {
@@ -79,7 +80,7 @@ function GameOfLife() {
       };
       loop();
     }
-  }, [state.isRunning, dispatch]);
+  }, [state.isRunning, numRows, numCols, dispatch]);
 
   return (
     <>
@@ -107,9 +108,11 @@ function GameOfLife() {
       <div>
         <p>Generation: {state.generation}</p>
         <button onClick={() => dispatch({ type: 'RANDOMIZE', numRows, numCols })}>Randomize</button>
-
-        <button onClick={() => dispatch({ type: 'TOGGLE_RUNNING' })}>
-          {state.isRunning ? 'Pause' : 'Start'}
+        <button
+          onClick={() => dispatch({ type: 'TOGGLE_RUNNING' })}
+          aria-label={state.isRunning ? 'Pause Simulation' : 'Start Simulation'}
+        >
+          {state.isRunning ? '⏸' : '▶️'}
         </button>
         <button
           onClick={() => {
