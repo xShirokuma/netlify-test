@@ -17,7 +17,8 @@ export const PerlinCanvas: React.FC = () => {
 
   const draw = (z: number) => {
     const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     const imageData = ctx.createImageData(WIDTH, HEIGHT);
@@ -38,18 +39,15 @@ export const PerlinCanvas: React.FC = () => {
     ctx.putImageData(imageData, 0, 0);
   };
 
-  const animate = () => {
-    zRef.current += PERLIN_Z_INCREMENT;
-    draw(zRef.current);
-    frameRef.current = requestAnimationFrame(animate);
-  };
-
   useEffect(() => {
+    const animate = () => {
+      zRef.current += PERLIN_Z_INCREMENT;
+      draw(zRef.current);
+      frameRef.current = requestAnimationFrame(animate);
+    };
+
     if (playing) {
       frameRef.current = requestAnimationFrame(animate);
-    } else if (frameRef.current !== null) {
-      cancelAnimationFrame(frameRef.current);
-      frameRef.current = null;
     }
 
     return () => {
@@ -60,11 +58,16 @@ export const PerlinCanvas: React.FC = () => {
     };
   }, [playing]);
 
+  // Initial draw on mount
+  useEffect(() => {
+    draw(zRef.current);
+  }, []);
+
   return (
     <div>
       <div className="mb-2 space-x-2">
         <button
-          onClick={() => setPlaying(p => !p)}
+          onClick={() => setPlaying((p) => !p)}
           className="px-3 py-1 bg-gray-700 text-white rounded hover:bg-gray-600"
         >
           {playing ? 'Pause' : 'Play'}
