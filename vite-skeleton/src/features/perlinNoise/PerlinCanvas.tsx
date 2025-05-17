@@ -1,4 +1,3 @@
-// src/features/perlinNoise/PerlinCanvas.tsx
 import React, { useRef, useEffect, useState } from 'react';
 import { Perlin3D } from './perlin';
 import {
@@ -12,9 +11,9 @@ import {
 export const PerlinCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [playing, setPlaying] = useState(true);
-  const perlinRef = useRef(new Perlin3D(PERLIN_SEED));
   const zRef = useRef(0);
   const frameRef = useRef<number | null>(null);
+  const perlin = useRef(new Perlin3D(PERLIN_SEED));
 
   const draw = (z: number) => {
     const canvas = canvasRef.current;
@@ -23,14 +22,12 @@ export const PerlinCanvas: React.FC = () => {
     if (!ctx) return;
 
     const imageData = ctx.createImageData(WIDTH, HEIGHT);
-    const perlin = perlinRef.current;
-
     for (let y = 0; y < HEIGHT; y++) {
       for (let x = 0; x < WIDTH; x++) {
-        const value = perlin.noise(x * SCALE, y * SCALE, z);
-        const color = Math.floor(value * 255);
+        const noiseValue = perlin.current.noise(x * SCALE, y * SCALE, z);
+        const color = Math.floor(noiseValue * 255);
         const i = (y * WIDTH + x) * 4;
-        imageData.data[i + 0] = color;
+        imageData.data[i] = color;
         imageData.data[i + 1] = color;
         imageData.data[i + 2] = color;
         imageData.data[i + 3] = 255;
@@ -40,19 +37,22 @@ export const PerlinCanvas: React.FC = () => {
     ctx.putImageData(imageData, 0, 0);
   };
 
-  const animate = () => {
-    zRef.current += PERLIN_Z_INCREMENT;
-    draw(zRef.current);
-    frameRef.current = requestAnimationFrame(animate);
-  };
-
+  // Draw one static frame on mount
   useEffect(() => {
-    if (playing) {
+    draw(zRef.current);
+  }, []);
+
+  // Animation loop
+  useEffect(() => {
+    if (!playing) return;
+
+    const animate = () => {
+      zRef.current += PERLIN_Z_INCREMENT;
+      draw(zRef.current);
       frameRef.current = requestAnimationFrame(animate);
-    } else if (frameRef.current !== null) {
-      cancelAnimationFrame(frameRef.current);
-      frameRef.current = null;
-    }
+    };
+
+    frameRef.current = requestAnimationFrame(animate);
 
     return () => {
       if (frameRef.current !== null) {
@@ -61,10 +61,6 @@ export const PerlinCanvas: React.FC = () => {
       }
     };
   }, [playing]);
-
-  useEffect(() => {
-    draw(zRef.current);
-  }, []);
 
   return (
     <div>
