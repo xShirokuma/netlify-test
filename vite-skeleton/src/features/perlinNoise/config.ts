@@ -1,0 +1,3 @@
+export const PERLIN_CANVAS_WIDTH = 1024;
+export const PERLIN_CANVAS_HEIGHT = 1024;
+export const PERLIN_CANVAS_SCALE = 0.05;
