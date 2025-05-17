@@ -2,6 +2,7 @@ import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
 import { GameOfLife } from './features';
+import { PerlinCanvas } from './features/perlinNoise';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <GameOfLife />
+      <PerlinCanvas />
     </>
   );
 }
