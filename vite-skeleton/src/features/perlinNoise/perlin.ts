@@ -1,4 +1,3 @@
-// src/features/perlinNoise/perlin.ts
 export class Perlin3D {
   private grad3 = [
     [1, 1, 0], [-1, 1, 0], [1, -1, 0], [-1, -1, 0],
