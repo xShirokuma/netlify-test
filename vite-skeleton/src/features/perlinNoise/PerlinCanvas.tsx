@@ -5,7 +5,7 @@ import {
   PERLIN_CANVAS_HEIGHT as HEIGHT,
   PERLIN_NOISE_SCALE as SCALE,
   PERLIN_Z_INCREMENT,
-  PERLIN_SEED
+  PERLIN_SEED,
 } from './config';
 
 export const PerlinCanvas: React.FC = () => {
@@ -66,7 +66,7 @@ export const PerlinCanvas: React.FC = () => {
     <div>
       <div className="mb-2 space-x-2">
         <button
-          onClick={() => setPlaying(p => !p)}
+          onClick={() => setPlaying((p) => !p)}
           className="px-3 py-1 bg-gray-700 text-white rounded hover:bg-gray-600"
         >
           {playing ? 'Pause' : 'Play'}

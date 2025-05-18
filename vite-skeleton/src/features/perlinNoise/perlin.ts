@@ -1,8 +1,17 @@
 export class Perlin3D {
   private grad3 = [
-    [1, 1, 0], [-1, 1, 0], [1, -1, 0], [-1, -1, 0],
-    [1, 0, 1], [-1, 0, 1], [1, 0, -1], [-1, 0, -1],
-    [0, 1, 1], [0, -1, 1], [0, 1, -1], [0, -1, -1],
+    [1, 1, 0],
+    [-1, 1, 0],
+    [1, -1, 0],
+    [-1, -1, 0],
+    [1, 0, 1],
+    [-1, 0, 1],
+    [1, 0, -1],
+    [-1, 0, -1],
+    [0, 1, 1],
+    [0, -1, 1],
+    [0, 1, -1],
+    [0, -1, -1],
   ];
 
   private perm: number[];
@@ -52,19 +61,15 @@ export class Perlin3D {
     const w = this.fade(zf);
 
     const p = this.perm;
-    const A = p[X] + Y, AA = p[A] + Z, AB = p[A + 1] + Z;
-    const B = p[X + 1] + Y, BA = p[B] + Z, BB = p[B + 1] + Z;
+    const A = p[X] + Y,
+      AA = p[A] + Z,
+      AB = p[A + 1] + Z;
+    const B = p[X + 1] + Y,
+      BA = p[B] + Z,
+      BB = p[B + 1] + Z;
 
-    const x1 = this.lerp(
-      this.grad(p[AA], xf, yf, zf),
-      this.grad(p[BA], xf - 1, yf, zf),
-      u
-    );
-    const x2 = this.lerp(
-      this.grad(p[AB], xf, yf - 1, zf),
-      this.grad(p[BB], xf - 1, yf - 1, zf),
-      u
-    );
+    const x1 = this.lerp(this.grad(p[AA], xf, yf, zf), this.grad(p[BA], xf - 1, yf, zf), u);
+    const x2 = this.lerp(this.grad(p[AB], xf, yf - 1, zf), this.grad(p[BB], xf - 1, yf - 1, zf), u);
     const y1 = this.lerp(x1, x2, v);
 
     const x3 = this.lerp(

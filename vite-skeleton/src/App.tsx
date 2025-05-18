@@ -2,7 +2,7 @@ import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
 import { GameOfLife } from './features';
-import { PerlinCanvas } from './features/perlinNoise';
+import { PerlinCanvas } from './features';
 
 function App() {
   return (
