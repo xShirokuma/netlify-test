@@ -1,7 +1,7 @@
 import { useRef, useEffect, useReducer } from 'react';
 import { generateEmptyGrid, computeNextGrid, gridsAreEqual, generateRandomGrid } from './utils';
 import { GRID_ROWS, GRID_COLS } from './config';
-import './GameOfLife.css';
+import './gameOfLife.css';
 
 function GameOfLife() {
   const numRows = GRID_ROWS;
